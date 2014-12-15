@@ -51,7 +51,7 @@ public class ProjectIndexer extends SimpleFileVisitor<Path>  {
         Field pathField = new StringField("path", file.toFile().getPath(), Field.Store.YES);
         doc.add(pathField);
 
-        Field sizeField = new LongField("path", file.toFile().length(), Field.Store.YES);
+        Field sizeField = new LongField("size", file.toFile().length(), Field.Store.YES);
         doc.add(sizeField);
 
         System.out.println("adding " + file);
