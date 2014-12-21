@@ -17,6 +17,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.HashMap;
+import java.util.UUID;
 
 public class Main {
 
@@ -30,14 +31,12 @@ public class Main {
         // RAM buffer to improve perf
         // iwc.setRAMBufferSizeMB(256.0);
         IndexWriter writer = new IndexWriter(dir, iwc);
-
         Path projectDir = Paths.get(".");
-
         Files.walkFileTree(projectDir, new ProjectIndexer(writer));
 
         // CommitData ==> used to rollback previous commit??
         HashMap<String, String> cd = new HashMap<>();
-        cd.put("a","e3");
+        cd.put("commit"+System.currentTimeMillis(), UUID.randomUUID().toString());
         writer.setCommitData(cd);
 
         writer.commit();
@@ -77,6 +76,13 @@ public class Main {
         /**
          * If a field is stored with TermPosition and Freq, we can search a sequence of word with the PhraseQuery
          */
+        System.out.println("====== PHRASE QUERY ======");
+        q = new PhraseQuery();
+        ((PhraseQuery)q).add(new Term("content", "field"));
+        ((PhraseQuery)q).add(new Term("content", "is"));
+        ((PhraseQuery)q).add(new Term("content", "stored"));
+        executeAndDisplaySearch(indexSearcher, q);
+
     }
 
     private static void executeAndDisplaySearch(IndexSearcher indexSearcher, Query q) throws IOException {
